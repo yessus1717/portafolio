@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <radialGradient id="bg" cx="62%" cy="48%" r="75%">
+      <stop offset="0" stop-color="#131c2a"/>
+      <stop offset=".55" stop-color="#0a1019"/>
+      <stop offset="1" stop-color="#05080d"/>
+    </radialGradient>
+    <pattern id="grid" width="64" height="64" patternUnits="userSpaceOnUse">
+      <path d="M64 0H0V64" fill="none" stroke="#7fa8d8" stroke-opacity=".035"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#grid)"/>
+
+  <!-- Detalle sutil: restos de una sesión de terminal -->
+  <g font-family="DejaVu Sans Mono,Consolas,monospace" font-size="13" fill="#7fa8d8" fill-opacity=".07">
+    <text x="64" y="930">$ nmap -sV --top-ports 100 10.10.10.0/24</text>
+    <text x="64" y="952">Starting Nmap 7.94 ( https://nmap.org )</text>
+    <text x="64" y="974">Nmap scan report for 10.10.10.5</text>
+    <text x="64" y="996">22/tcp  open  ssh      OpenSSH 9.2</text>
+    <text x="64" y="1018">80/tcp  open  http     nginx 1.22</text>
+  </g>
+
+  <!-- Dragón de Kali, muy tenue -->
+  <g transform="translate(1180 500) scale(2.7)" opacity=".13" fill="none" stroke="#cfd9ea" stroke-linecap="round">
+    <path stroke-width="5.5" d="M130 -60C60 -100 -20 -40 40 0C100 40 190 30 200 110C205 150 185 185 165 205"/>
+    <g stroke-width="2.8">
+      <path d="M45 -72Q-60 -112 -230 -125"/>
+      <path d="M45 -72Q-60 -112 -190 -75"/>
+      <path d="M45 -72Q-60 -112 -150 -25"/>
+      <path d="M45 -72Q-60 -112 -110 10"/>
+    </g>
+    <path fill="#cfd9ea" stroke="none" d="M128 -62L152 -76L178 -46L150 -48Z"/>
+  </g>
+</svg>

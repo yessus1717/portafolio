@@ -1,0 +1,150 @@
+/* ==========================================================
+   PARTE 02 · Escritorio (estilo Kali / XFCE)
+   Todo cuelga de #desktop-root. Las medidas viven en variables
+   para ajustar tamaños sin tocar el resto del CSS.
+   ========================================================== */
+
+#desktop-root {
+  --panel-h: 30px;
+  --icon: 48px;
+  --cell-w: 92px;
+  --cell-h: 98px;
+  --pad: 14px;
+  --panel-bg: #1c2028;
+  --panel-fg: #d5dae3;
+  --sel-bg: rgba(58, 126, 206, .4);
+  --sel-bd: rgba(120, 175, 240, .7);
+
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  color: var(--panel-fg);
+  font: 12px/1.25 "Cantarell", "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+  background: #080c12 url(wallpaper.svg) center / cover no-repeat;
+  user-select: none;
+  -webkit-user-select: none;
+
+  /* Aparece con fundido cuando la Parte 01 pone data-ready="true" */
+  display: block;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .9s ease, visibility 0s linear .9s;
+}
+#desktop-root[data-ready="true"] {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* ---------- Panel superior ---------- */
+.dk-panel {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 2;
+  box-sizing: border-box;
+  height: calc(var(--panel-h) + env(safe-area-inset-top, 0px));
+  padding: env(safe-area-inset-top, 0px) 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: linear-gradient(180deg, #212631, var(--panel-bg));
+  border-bottom: 1px solid #0c0e13;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, .4);
+}
+.dk-btn {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 22px;
+  border-radius: 3px;
+  color: var(--panel-fg);
+  transition: background .15s ease;
+}
+.dk-btn:hover { background: rgba(255, 255, 255, .08); }
+.dk-btn:active { background: rgba(255, 255, 255, .14); }
+/* Lanzadores decorativos (aún sin función): no reaccionan al cursor */
+.dk-btn:disabled { cursor: default; }
+.dk-btn:disabled:hover,
+.dk-btn:disabled:active { background: none; }
+.dk-btn:focus-visible { outline: 1px dotted #9cc4f0; }
+.dk-btn svg { width: 16px; height: 16px; }
+.dk-sep { width: 1px; height: 16px; margin: 0 4px; background: rgba(255, 255, 255, .12); }
+.dk-tasks { flex: 1; }               /* zona de ventanas abiertas (Parte 03) */
+.dk-tray { display: flex; align-items: center; gap: 2px; }
+.dk-clock { padding: 0 8px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.dk-date { opacity: .7; margin-right: 8px; }
+
+/* ---------- Iconos del escritorio ---------- */
+.dk-icons {
+  position: absolute;
+  inset: calc(var(--panel-h) + env(safe-area-inset-top, 0px)) 0 0 0;
+  padding: var(--pad);
+  padding-left: max(var(--pad), env(safe-area-inset-left, 0px));
+  padding-bottom: max(var(--pad), env(safe-area-inset-bottom, 0px));
+  display: grid;
+  grid-auto-flow: column;                          /* llena hacia abajo y pasa a otra columna */
+  grid-template-rows: repeat(auto-fill, var(--cell-h));
+  grid-auto-columns: var(--cell-w);
+  justify-content: start;
+  align-content: start;
+  gap: 4px;
+}
+.dk-icon {
+  all: unset;
+  box-sizing: border-box;
+  height: var(--cell-h);
+  padding: 6px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  text-align: center;
+  cursor: default;
+  transition: background .14s ease, border-color .14s ease;
+}
+.dk-icon .dk-ico {
+  width: var(--icon);
+  height: var(--icon);
+  flex: none;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .5)) drop-shadow(0 0 0 rgba(106, 166, 224, 0));
+  transition: transform .14s ease, filter .14s ease;
+}
+.dk-icon span {
+  max-width: 100%;
+  color: #e8ecf2;
+  overflow-wrap: anywhere;
+  text-shadow: 0 1px 2px #000, 0 0 3px rgba(0, 0, 0, .8);
+}
+.dk-icon:hover { background: rgba(255, 255, 255, .06); }
+.dk-icon:hover .dk-ico { transform: translateY(-1px); filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .5)) drop-shadow(0 0 6px rgba(106, 166, 224, .35)); }
+.dk-icon:active .dk-ico { transform: scale(.96); }
+.dk-icon.is-selected { background: var(--sel-bg); border-color: var(--sel-bd); }
+.dk-icon.is-selected .dk-ico { filter: drop-shadow(0 2px 2px rgba(0, 0, 0, .5)) drop-shadow(0 0 5px rgba(106, 166, 224, .3)); }
+.dk-icon:focus-visible { outline: 1px dotted #9cc4f0; outline-offset: -2px; }
+
+/* ---------- Capa de ventanas (Parte 03) ---------- */
+.dk-windows {
+  position: absolute;
+  inset: calc(var(--panel-h) + env(safe-area-inset-top, 0px)) 0 0 0;
+  pointer-events: none;                /* las ventanas activarán pointer-events:auto */
+}
+
+/* ---------- Pantallas pequeñas ---------- */
+@media (max-width: 600px), (max-height: 520px) {
+  #desktop-root { --icon: 40px; --cell-w: 78px; --cell-h: 86px; --pad: 10px; font-size: 11px; }
+  .dk-date { display: none; }
+}
+/* Pantallas táctiles: panel y botones más cómodos de tocar */
+@media (pointer: coarse) {
+  #desktop-root { --panel-h: 38px; }
+  .dk-btn { width: 32px; height: 28px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #desktop-root { transition-duration: .01s; }
+  .dk-btn, .dk-icon, .dk-icon .dk-ico { transition: none; }
+  .dk-icon:hover .dk-ico, .dk-icon:active .dk-ico { transform: none; }
+}

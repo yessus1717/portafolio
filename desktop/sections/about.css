@@ -1,0 +1,86 @@
+/* ==========================================================
+   About Me · estilos (ámbito: .ab-*)
+   Oscuro, sobrio, con acentos azules discretos. Sin animaciones.
+   ========================================================== */
+
+.ab-root { max-width: 900px; margin: 0 auto; }
+.ab { display: grid; gap: 12px; color: #a8b3c4; font-size: 13px; line-height: 1.6; }
+.ab p { margin: 0 0 8px; }
+.ab p:last-child { margin-bottom: 0; }
+
+.ab-i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Cabecera ---------- */
+.ab-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(180deg, #1a2130, #161b24);
+  border: 1px solid #232b38;
+  border-radius: 6px;
+}
+.ab-photo {
+  width: 96px;
+  height: 96px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #11151c;
+  border: 1px solid #2a3444;
+}
+.ab-photo.is-empty { border-style: dashed; color: #46556e; }
+.ab-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ab-avatar { width: 46px; height: 46px; stroke-width: 1.3; }
+.ab-id { min-width: 0; }
+.ab-cmd { color: #7d8696; font: 11px/1.2 ui-monospace, Menlo, Consolas, monospace; margin-bottom: 4px !important; }
+.ab-id h1 { margin: 0; font-size: 22px; line-height: 1.2; font-weight: 600; color: #eef3fb; }
+.ab-title { color: #6aa6e0; margin: 2px 0 6px !important; }
+.ab-loc { display: flex; align-items: center; gap: 6px; color: #8e9ab0; }
+.ab-loc .ab-i { width: 15px; height: 15px; }
+
+/* ---------- Tarjetas ---------- */
+.ab-card { padding: 14px 16px; background: #171c25; border: 1px solid #232b38; border-radius: 6px; }
+.ab-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  color: #6aa6e0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.ab-card h3 .ab-i { width: 16px; height: 16px; }
+
+/* Áreas de interés */
+.ab-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); }
+.ab-item { display: flex; gap: 10px; padding: 10px; background: #141922; border: 1px solid #202836; border-radius: 5px; }
+.ab-tile { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 5px; background: rgba(79, 143, 224, .12); color: #6aa6e0; }
+.ab-item h4 { margin: 0 0 2px; font-size: 13px; color: #dbe4f2; }
+.ab-item p { font-size: 12px; line-height: 1.5; color: #8e9ab0; }
+
+/* Herramientas */
+.ab-note { color: #7d8696; font-size: 12px; }
+.ab-cat { margin-top: 12px; }
+.ab-cat h4 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: 12px; color: #dbe4f2; }
+.ab-cat h4 .ab-i { width: 15px; height: 15px; color: #6aa6e0; }
+.ab-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.ab-chip { padding: 3px 9px; border-radius: 3px; background: #1d2430; border: 1px solid #2a3444; color: #c5cfdf; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+
+/* Career Goals + Idiomas */
+.ab-two { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); }
+.ab-langs { margin: 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.ab-lang { display: flex; justify-content: space-between; align-items: center; padding: 8px 10px; background: #141922; border: 1px solid #202836; border-radius: 5px; color: #dbe4f2; }
+.ab-level { color: #6aa6e0; font: 12px/1 ui-monospace, Menlo, Consolas, monospace; }
+
+@media (max-width: 480px) {
+  .ab-head { padding: 12px; gap: 12px; }
+  .ab-photo { width: 72px; height: 72px; }
+  .ab-avatar { width: 36px; height: 36px; }
+  .ab-id h1 { font-size: 19px; }
+}

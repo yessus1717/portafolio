@@ -1,0 +1,607 @@
+<!doctype html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <title>Jesus Batista Portafolio de Ciberseguridad</title>
+        <style>
+            :root {
+                color-scheme: dark;
+                background: #02040a;
+            }
+            html,
+            body {
+                margin: 0;
+                background: #02040a;
+            }
+            #gl {
+                position: fixed;
+                inset: 0;
+                width: 100%;
+                height: 100%;
+                display: block;
+            }
+            #scroll {
+                height: 700vh;
+            }
+            .vig {
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.72));
+            }
+            #flash {
+                position: fixed;
+                inset: 0;
+                background: #bcd6ff;
+                opacity: 0;
+                pointer-events: none;
+            }
+            #hint {
+                position: fixed;
+                left: 0;
+                right: 0;
+                bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+                text-align: center;
+                pointer-events: none;
+                font:
+                    12px/1 ui-monospace,
+                    Menlo,
+                    Consolas,
+                    monospace;
+                letter-spacing: 0.3em;
+                text-transform: uppercase;
+                color: #7fa8ff;
+            }
+            #hint i {
+                display: block;
+                width: 1px;
+                height: 36px;
+                margin: 10px auto 0;
+                background: linear-gradient(#7fa8ff, transparent);
+                animation: d 1.8s ease-in-out infinite;
+            }
+            @keyframes d {
+                0% {
+                    transform: scaleY(0);
+                    transform-origin: top;
+                }
+                50% {
+                    transform: scaleY(1);
+                    transform-origin: top;
+                }
+                51% {
+                    transform: scaleY(1);
+                    transform-origin: bottom;
+                }
+                100% {
+                    transform: scaleY(0);
+                    transform-origin: bottom;
+                }
+            }
+            #boot {
+                position: fixed;
+                inset: 0;
+                display: grid;
+                place-items: center;
+                background: rgba(0, 0, 0, 0.84);
+                opacity: 0;
+                pointer-events: none;
+            }
+            #boot .box {
+                width: min(560px, 86vw);
+                font:
+                    13px/1.7 ui-monospace,
+                    Menlo,
+                    Consolas,
+                    monospace;
+                color: #7fb2ff;
+            }
+            #boot .brand {
+                font:
+                    700 28px/1 ui-monospace,
+                    Menlo,
+                    Consolas,
+                    monospace;
+                letter-spacing: 0.35em;
+                color: #cfe0ff;
+                margin-bottom: 22px;
+                text-shadow: 0 0 18px #2f7bff;
+            }
+            #boot .brand span {
+                color: #2f7bff;
+                margin-left: 0.6em;
+            }
+            #log {
+                min-height: 13em;
+                white-space: pre-wrap;
+            }
+            .bar {
+                height: 3px;
+                background: #0b1730;
+                margin-top: 18px;
+            }
+            .bar b {
+                display: block;
+                height: 100%;
+                width: 0;
+                background: #2f7bff;
+                box-shadow: 0 0 12px #2f7bff;
+            }
+            /* El escritorio (Parte 02) se estiliza en desktop/desktop.css y se muestra con data-ready="true". */
+        </style>
+        <link rel="stylesheet" href="desktop/desktop.css" />
+        <link rel="stylesheet" href="desktop/windows.css" />
+        <link rel="stylesheet" href="desktop/sections/about.css" />
+        <link rel="stylesheet" href="desktop/sections/projects.css" />
+        <link rel="stylesheet" href="desktop/sections/skills.css" />
+        <link rel="stylesheet" href="desktop/sections/certifications.css" />
+        <link rel="stylesheet" href="desktop/sections/contact.css" />
+    </head>
+    <body>
+        <canvas id="gl"></canvas>
+        <div class="vig"></div>
+        <div id="flash"></div>
+        <div id="boot">
+            <div class="box">
+                <div class="brand">KALI<span>LINUX</span></div>
+                <div id="log"></div>
+                <div class="bar"><b id="bar"></b></div>
+            </div>
+        </div>
+        <div id="hint">Desplázate para entrar<i></i></div>
+        <main id="desktop-root" data-ready="false" aria-hidden="true"></main>
+        <div id="scroll"></div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+        <script>
+            (() => {
+                "use strict";
+
+                /* ============ 1. CONFIGURACIÓN ============ */
+                const CFG = {
+                    // Fases del scroll (0 a 1)
+                    dolly: 0.6, // fin del acercamiento al monitor
+                    enter: 0.8, // fin del cruce de la pantalla / túnel
+                    bootStart: 0.82,
+                    bootEnd: 0.98,
+                    screenY: 1.02, // altura del centro de la pantalla
+                    boot: [
+                        "[  OK  ] Iniciando kernel 6.x-kali-amd64",
+                        "[  OK  ] Montando sistemas de archivos",
+                        "[  OK  ] Cargando módulos de red",
+                        "[  OK  ] Iniciando servicios de seguridad",
+                        "[  OK  ] Levantando entorno gráfico",
+                        "[  OK  ] Aplicando tema oscuro",
+                        "Bienvenido, operador.",
+                    ],
+                };
+
+                /* ============ 2. UTILIDADES ============ */
+                const $ = s => document.querySelector(s);
+                const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+                const lerp = (a, b, t) => a + (b - a) * t;
+                const sm = t => t * t * (3 - 2 * t);
+                const eio = t => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+                const rng = (t, a, b) => clamp((t - a) / (b - a));
+                const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+                let renderer;
+                try {
+                    renderer = new THREE.WebGLRenderer({
+                        canvas: $("#gl"),
+                        antialias: true,
+                        powerPreference: "high-performance",
+                    });
+                } catch (e) {
+                    document.body.insertAdjacentHTML(
+                        "afterbegin",
+                        '<p style="color:#9fc3ff;font:14px monospace;padding:2rem">WebGL no está disponible en este dispositivo.</p>',
+                    );
+                    return;
+                }
+                renderer.outputEncoding = THREE.sRGBEncoding;
+
+                /* ============ 3. TEXTURAS PROCEDURALES (canvas) ============ */
+                function tex(w, h, draw) {
+                    const c = document.createElement("canvas");
+                    c.width = w;
+                    c.height = h;
+                    draw(c.getContext("2d"), w, h);
+                    const t = new THREE.CanvasTexture(c);
+                    t.encoding = THREE.sRGBEncoding;
+                    t.anisotropy = 4;
+                    return t;
+                }
+
+                function dragon(c, x, y, s, col, lw) {
+                    c.save();
+                    c.translate(x, y);
+                    c.scale(s, s);
+                    c.strokeStyle = c.fillStyle = col;
+                    c.lineCap = "round";
+                    c.lineWidth = lw / s;
+                    c.beginPath();
+                    c.moveTo(130, -60);
+                    c.bezierCurveTo(60, -100, -20, -40, 40, 0);
+                    c.bezierCurveTo(100, 40, 190, 30, 200, 110);
+                    c.bezierCurveTo(205, 150, 185, 185, 165, 205);
+                    c.stroke();
+                    c.lineWidth = (lw / s) * 0.5;
+                    for (const [ex, ey] of [
+                        [-230, -125],
+                        [-190, -75],
+                        [-150, -25],
+                        [-110, 10],
+                    ]) {
+                        c.beginPath();
+                        c.moveTo(45, -72);
+                        c.quadraticCurveTo(-60, -112, ex, ey);
+                        c.stroke();
+                    }
+                    c.beginPath();
+                    c.moveTo(128, -62);
+                    c.lineTo(152, -76);
+                    c.lineTo(178, -46);
+                    c.lineTo(150, -48);
+                    c.fill();
+                    c.restore();
+                }
+
+                const screenTex = tex(1280, 720, (c, w, h) => {
+                    const g = c.createRadialGradient(w * 0.45, h * 0.45, 50, w / 2, h / 2, w * 0.7);
+                    g.addColorStop(0, "#0a1426");
+                    g.addColorStop(1, "#02050c");
+                    c.fillStyle = g;
+                    c.fillRect(0, 0, w, h);
+                    c.lineCap = "round";
+                    for (let i = 0; i < 9; i++) {
+                        c.strokeStyle = `rgba(47,123,255,${0.05 + i * 0.02})`;
+                        c.lineWidth = 2 + i * 0.6;
+                        c.shadowColor = "#2f7bff";
+                        c.shadowBlur = 18;
+                        c.beginPath();
+                        c.moveTo(w, h * 0.5 + i * 14);
+                        c.bezierCurveTo(w * 0.8, h * 0.4 - i * 10, w * 0.7, h * 0.95, w * 0.5, h * 0.9 + i * 4);
+                        c.stroke();
+                        c.beginPath();
+                        c.moveTo(0, h * 0.3 + i * 8);
+                        c.bezierCurveTo(w * 0.2, h * 0.2, w * 0.3, h * 0.45, w * 0.45, h * 0.4 - i * 6);
+                        c.stroke();
+                    }
+                    c.shadowBlur = 0;
+                    dragon(c, w * 0.52, h * 0.5, 1.15, "#cdd9f0", 8);
+                });
+
+                const keysTex = tex(1024, 320, (c, w, h) => {
+                    c.fillStyle = "#04060b";
+                    c.fillRect(0, 0, w, h);
+                    c.strokeStyle = "#2f7bff";
+                    c.shadowColor = "#2f7bff";
+                    c.shadowBlur = 8;
+                    c.lineWidth = 2;
+                    for (let r = 0; r < 5; r++)
+                        for (let k = 0; k < 15; k++) c.strokeRect(10 + k * 67, 12 + r * 60, 56, 48);
+                });
+
+                const poster = (lines, size, y0, art) =>
+                    tex(512, 700, (c, w, h) => {
+                        c.fillStyle = "#070b13";
+                        c.fillRect(0, 0, w, h);
+                        c.strokeStyle = "rgba(80,140,255,.45)";
+                        c.lineWidth = 2;
+                        c.strokeRect(16, 16, w - 32, h - 32);
+                        art(c, w, h);
+                        c.fillStyle = "#8b96aa";
+                        c.textAlign = "center";
+                        c.font = `bold ${size}px Impact,Arial Black,sans-serif`;
+                        lines.forEach((l, i) => c.fillText(l, w / 2, y0 + i * (size + 6)));
+                    });
+                const posterHack = poster(["HACK", "THE", "PLANET"], 78, 440, (c, w) => {
+                    c.strokeStyle = "rgba(100,160,255,.6)";
+                    c.lineWidth = 2;
+                    c.beginPath();
+                    c.arc(w / 2, 230, 110, 0, 7);
+                    c.stroke();
+                    for (const k of [0.35, 0.7]) {
+                        c.beginPath();
+                        c.ellipse(w / 2, 230, 110 * k, 110, 0, 0, 7);
+                        c.stroke();
+                    }
+                    for (const o of [-60, 0, 60]) {
+                        c.beginPath();
+                        c.moveTo(w / 2 - Math.sqrt(12100 - o * o), 230 + o);
+                        c.lineTo(w / 2 + Math.sqrt(12100 - o * o), 230 + o);
+                        c.stroke();
+                    }
+                });
+                const posterKali = poster(["KALI LINUX"], 62, 600, (c, w) =>
+                    dragon(c, w / 2 + 10, 300, 1.05, "#8b96aa", 7),
+                );
+
+                const glowTex = tex(8, 128, (c, w, h) => {
+                    const g = c.createLinearGradient(0, 0, 0, h);
+                    g.addColorStop(0, "rgba(47,123,255,0)");
+                    g.addColorStop(0.7, "rgba(47,123,255,.55)");
+                    g.addColorStop(1, "rgba(47,123,255,0)");
+                    c.fillStyle = g;
+                    c.fillRect(0, 0, w, h);
+                });
+
+                /* ============ 4. ESCENA ============ */
+                const scene = new THREE.Scene();
+                scene.background = new THREE.Color(0x02040a);
+                scene.fog = new THREE.FogExp2(0x02040a, 0.035);
+                const cam = new THREE.PerspectiveCamera(38, 1, 0.05, 120);
+
+                const room = new THREE.Group();
+                scene.add(room);
+                const std = o => new THREE.MeshStandardMaterial(o);
+                const add = (geo, mat, x, y, z, parent = room) => {
+                    const m = new THREE.Mesh(geo, mat);
+                    m.position.set(x, y, z);
+                    parent.add(m);
+                    return m;
+                };
+                const Y = CFG.screenY;
+
+                room.add(new THREE.HemisphereLight(0x3a5a9a, 0x05070c, 0.55));
+                const led = new THREE.PointLight(0x2f7bff, 1.6, 5);
+                led.position.set(0, 0.2, -0.4);
+                room.add(led);
+                const glow = new THREE.PointLight(0x4f8bff, 1.1, 6);
+                glow.position.set(0, Y, 0.9);
+                room.add(glow);
+
+                add(new THREE.PlaneGeometry(16, 8), std({ color: 0x14171c, roughness: 0.95 }), 0, 2.4, -1.4);
+                add(
+                    new THREE.BoxGeometry(10, 0.12, 3),
+                    std({ color: 0x15110f, roughness: 0.45, metalness: 0.1 }),
+                    0,
+                    -0.06,
+                    0.5,
+                );
+                // Monitor
+                add(
+                    new THREE.BoxGeometry(1.1, 0.04, 0.5),
+                    std({ color: 0x08090c, metalness: 0.6, roughness: 0.4 }),
+                    0,
+                    0.02,
+                    -0.05,
+                );
+                add(
+                    new THREE.BoxGeometry(0.2, 0.5, 0.08),
+                    std({ color: 0x08090c, metalness: 0.6, roughness: 0.4 }),
+                    0,
+                    0.27,
+                    -0.12,
+                );
+                add(
+                    new THREE.BoxGeometry(2.76, 1.58, 0.1),
+                    std({ color: 0x050507, metalness: 0.6, roughness: 0.4 }),
+                    0,
+                    Y,
+                    -0.05,
+                );
+                const screen = add(
+                    new THREE.PlaneGeometry(2.56, 1.44),
+                    new THREE.MeshBasicMaterial({ map: screenTex, toneMapped: false }),
+                    0,
+                    Y,
+                    0.002,
+                );
+                // LED trasero + resplandor en la pared
+                add(
+                    new THREE.BoxGeometry(3, 0.02, 0.02),
+                    new THREE.MeshBasicMaterial({ color: 0x3d8bff }),
+                    0,
+                    0.02,
+                    -0.45,
+                );
+                add(
+                    new THREE.PlaneGeometry(4.2, 1.1),
+                    new THREE.MeshBasicMaterial({
+                        map: glowTex,
+                        transparent: true,
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false,
+                    }),
+                    0,
+                    0.45,
+                    -1.38,
+                );
+                // Teclado y mouse
+                add(new THREE.BoxGeometry(1.7, 0.05, 0.56), std({ color: 0x07090e, roughness: 0.5 }), 0, 0.025, 1.05);
+                const kb = add(
+                    new THREE.PlaneGeometry(1.64, 0.5),
+                    new THREE.MeshBasicMaterial({ map: keysTex }),
+                    0,
+                    0.052,
+                    1.05,
+                );
+                kb.rotation.x = -Math.PI / 2;
+                add(new THREE.BoxGeometry(0.8, 0.01, 0.7), std({ color: 0x090b10, roughness: 0.9 }), 1.6, 0.005, 1.0);
+                add(
+                    new THREE.SphereGeometry(1, 20, 14),
+                    std({ color: 0x080a0f, roughness: 0.35 }),
+                    1.6,
+                    0.035,
+                    1.0,
+                ).scale.set(0.07, 0.035, 0.11);
+                // Pósters
+                const pm = t => new THREE.MeshBasicMaterial({ map: t, color: 0x8a99b0 });
+                add(new THREE.PlaneGeometry(0.95, 1.3), pm(posterHack), -2.3, 2.3, -1.38);
+                add(new THREE.PlaneGeometry(0.95, 1.3), pm(posterKali), 2.3, 2.3, -1.38);
+
+                // Túnel de datos detrás de la pantalla
+                const N = 2200,
+                    pos = new Float32Array(N * 3),
+                    col = new Float32Array(N * 3),
+                    c1 = new THREE.Color(0x2f7bff),
+                    c2 = new THREE.Color(0x8fe3ff);
+                for (let i = 0; i < N; i++) {
+                    const a = Math.random() * 6.283,
+                        r = 0.6 + Math.pow(Math.random(), 2) * 4.2;
+                    pos.set([Math.cos(a) * r, Math.sin(a) * r, -1.5 - Math.random() * 60], i * 3);
+                    c1.clone()
+                        .lerp(c2, Math.random())
+                        .toArray(col, i * 3);
+                }
+                const tg = new THREE.BufferGeometry();
+                tg.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+                tg.setAttribute("color", new THREE.BufferAttribute(col, 3));
+                const tunnel = new THREE.Points(
+                    tg,
+                    new THREE.PointsMaterial({
+                        size: 0.07,
+                        vertexColors: true,
+                        transparent: true,
+                        blending: THREE.AdditiveBlending,
+                        depthWrite: false,
+                    }),
+                );
+                tunnel.position.y = Y;
+                tunnel.visible = false;
+                scene.add(tunnel);
+
+                /* ============ 5. CÁMARA CONTROLADA POR SCROLL ============ */
+                const S = { t: 0 };
+                const P = { x: 0, y: 0, tx: 0, ty: 0 };
+                let fit = 1,
+                    dirty = true,
+                    done = false;
+                const listeners = [];
+
+                function resize() {
+                    const w = innerWidth,
+                        h = innerHeight;
+                    renderer.setPixelRatio(Math.min(devicePixelRatio, w < 800 ? 1.5 : 2));
+                    renderer.setSize(w, h, false);
+                    cam.aspect = w / h;
+                    fit = clamp(1.78 / cam.aspect, 1, 3.5); // aleja la cámara en pantallas verticales
+                    dirty = true;
+                }
+                addEventListener("resize", resize);
+                resize();
+                if (!reduce)
+                    addEventListener("pointermove", e => {
+                        P.tx = e.clientX / innerWidth - 0.5;
+                        P.ty = e.clientY / innerHeight - 0.5;
+                    });
+
+                function placeCamera(t) {
+                    const a = eio(rng(t, 0, CFG.dolly)),
+                        b = sm(rng(t, CFG.dolly, CFG.enter)),
+                        c = rng(t, CFG.enter, 1);
+                    const par = 1 - a;
+                    const x = lerp(1.9, 0, a) + P.x * 0.5 * par;
+                    const y = lerp(1.75, Y, a) - P.y * 0.3 * par;
+                    let z = lerp(4.8 * fit, 1.1, a);
+                    if (t > CFG.dolly) z = lerp(1.1, -6, b) - 8 * c;
+                    cam.position.set(x, y, z);
+                    cam.fov = lerp(38, 72, sm(rng(t, CFG.dolly, CFG.enter - 0.04)));
+                    cam.updateProjectionMatrix();
+                    cam.lookAt(0, lerp(1.25, Y, a), t > CFG.dolly ? z - 5 : 0);
+                    cam.rotateZ(Math.sin(b * Math.PI) * 0.06);
+                    return z;
+                }
+
+                /* ============ 6. OVERLAYS Y ARRANQUE ============ */
+                const boot = $("#boot"),
+                    log = $("#log"),
+                    bar = $("#bar"),
+                    flash = $("#flash"),
+                    hint = $("#hint"),
+                    root = $("#desktop-root");
+                let shown = -1;
+
+                function overlays(t, z) {
+                    flash.style.opacity = t > CFG.dolly ? (Math.exp((-z * z) / 0.3) * 0.95).toFixed(3) : 0;
+                    hint.style.opacity = 1 - rng(t, 0, 0.04);
+                    boot.style.opacity = sm(rng(t, CFG.enter - 0.06, CFG.enter + 0.04));
+                    const q = rng(t, CFG.bootStart, CFG.bootEnd),
+                        n = Math.ceil(q * CFG.boot.length);
+                    if (n !== shown) {
+                        shown = n;
+                        log.textContent = CFG.boot.slice(0, n).join("\n");
+                    }
+                    bar.style.width = (q * 100).toFixed(1) + "%";
+                    const fin = t >= 0.985;
+                    if (fin && !done) {
+                        done = true;
+                        root.dataset.ready = "true";
+                        listeners.forEach(f => f());
+                        dispatchEvent(new CustomEvent("portfolio:intro-complete"));
+                    } else if (!fin && done) {
+                        done = false;
+                        root.dataset.ready = "false";
+                    }
+                }
+
+                /* ============ 7. BUCLE ============ */
+                let last = -1;
+                function render() {
+                    P.x = lerp(P.x, P.tx, 0.06);
+                    P.y = lerp(P.y, P.ty, 0.06);
+                    const t = S.t;
+                    if (
+                        !dirty &&
+                        Math.abs(t - last) < 1e-5 &&
+                        Math.abs(P.x - P.tx) < 1e-4 &&
+                        Math.abs(P.y - P.ty) < 1e-4
+                    )
+                        return;
+                    last = t;
+                    dirty = false;
+                    const z = placeCamera(t);
+                    room.visible = z > 0.02;
+                    tunnel.visible = !room.visible;
+                    tunnel.rotation.z = t * 1.4;
+                    overlays(t, z);
+                    renderer.render(scene, cam);
+                }
+
+                gsap.registerPlugin(ScrollTrigger);
+                gsap.to(S, {
+                    t: 1,
+                    ease: "none",
+                    scrollTrigger: {
+                        trigger: "#scroll",
+                        start: "top top",
+                        end: "bottom bottom",
+                        scrub: reduce ? true : 1.2,
+                    },
+                });
+                gsap.ticker.add(render);
+
+                /* ============ 8. API PARA LA PARTE 02 ============ */
+                window.Portfolio = window.Portfolio || {};
+                window.Portfolio.intro = {
+                    get progress() {
+                        return S.t;
+                    },
+                    onComplete(cb) {
+                        listeners.push(cb);
+                        if (done) cb();
+                    },
+                };
+                // Parte 02: montar el escritorio dentro de #desktop-root (visible cuando data-ready="true")
+                // o escuchar el evento "portfolio:intro-complete".
+            })();
+        </script>
+        <script src="desktop/desktop.js"></script>
+        <script src="desktop/windows.js"></script>
+        <script src="desktop/sections/about.data.js"></script>
+        <script src="desktop/sections/about.js"></script>
+        <script src="desktop/sections/projects.data.js"></script>
+        <script src="desktop/sections/projects.js"></script>
+        <script src="desktop/sections/skills.data.js"></script>
+        <script src="desktop/sections/skills.js"></script>
+        <script src="desktop/sections/certifications.data.js"></script>
+        <script src="desktop/sections/certifications.js"></script>
+        <script src="desktop/sections/contact.data.js"></script>
+        <script src="desktop/sections/contact.js"></script>
+    </body>
+</html>

@@ -1,0 +1,223 @@
+/* ==========================================================
+   Certifications · estilos (ámbito: .ct-*)
+   Misma identidad que About Me, Projects y Skills: oscuro, sobrio,
+   acentos azules discretos. Solo una transición suave entre vistas.
+   ========================================================== */
+
+.ct-root { max-width: 960px; margin: 0 auto; container-type: inline-size; color: #a8b3c4; font-size: 13px; line-height: 1.6; }
+.ct-root p { margin: 0 0 8px; }
+.ct-root p:last-child { margin-bottom: 0; }
+.ct-i { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+.ct-view { display: grid; gap: 12px; animation: ct-in .18s ease-out; }
+@keyframes ct-in { from { opacity: 0; transform: translateY(4px); } }
+
+/* ---------- Cabecera ---------- */
+.ct-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #1a2130, #161b24);
+  border: 1px solid #232b38;
+  border-radius: 6px;
+}
+.ct-headico { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 6px; background: rgba(79, 143, 224, .12); color: #6aa6e0; }
+.ct-headico .ct-i { width: 22px; height: 22px; }
+.ct-head h1 { margin: 0 0 2px; font-size: 20px; line-height: 1.2; font-weight: 600; color: #eef3fb; }
+.ct-head p { color: #8e9ab0; }
+
+/* ---------- Filtros ---------- */
+.ct-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.ct-filter {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid #2a3444;
+  border-radius: 3px;
+  background: #1d2430;
+  color: #c5cfdf;
+  font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.ct-filter .ct-i { width: 14px; height: 14px; }
+.ct-filter small { font-size: 11px; opacity: .7; }
+.ct-filter:hover { background: #232c3b; }
+.ct-filter[aria-pressed="true"] { background: rgba(58, 126, 206, .28); border-color: rgba(120, 175, 240, .55); color: #eaf2fd; }
+.ct-filter.is-empty { opacity: .55; }
+.ct-filter:focus-visible,
+.ct-card:focus-visible,
+.ct-back:focus-visible,
+.ct-link:focus-visible { outline: 1px dotted #9cc4f0; outline-offset: 2px; }
+.ct-count { margin: 0; color: #7d8696; font: 11px/1.2 ui-monospace, Menlo, Consolas, monospace; }
+
+/* ---------- Tarjetas ---------- */
+.ct-grid { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); }
+.ct-empty { grid-column: 1 / -1; padding: 28px 12px; text-align: center; color: #7d8696; border: 1px dashed #2a3444; border-radius: 6px; }
+.ct-card {
+  appearance: none;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px;
+  text-align: left;
+  background: #171c25;
+  border: 1px solid #232b38;
+  border-radius: 6px;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+.ct-card:hover { background: #1a212c; border-color: #34547c; box-shadow: 0 4px 12px rgba(0, 0, 0, .3); }
+.ct-card:active { background: #1d2532; }
+.ct-top { display: flex; align-items: center; gap: 10px; }
+.ct-ttl { min-width: 0; }
+.ct-card h2 { margin: 0; font-size: 15px; line-height: 1.3; font-weight: 600; color: #eef3fb; }
+.ct-root p.ct-issuer { margin: 2px 0 0; color: #8e9ab0; font-size: 12px; line-height: 1.4; }
+.ct-root p.ct-desc {
+  margin: 0;
+  color: #8e9ab0;
+  font-size: 12px;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
+}
+.ct-card .ct-labels { margin-top: auto; }
+
+/* Insignia genérica (nunca una insignia oficial) */
+.ct-badge {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  flex: none;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #11151c;
+  border: 1px solid #2a3444;
+  color: #6aa6e0;
+}
+.ct-badge img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.ct-badge.is-empty { background: rgba(79, 143, 224, .1); border-style: dashed; }
+.ct-badge .ct-i { width: 22px; height: 22px; }
+.ct-badge.is-big { width: 88px; height: 88px; border-radius: 10px; }
+.ct-badge.is-big .ct-i { width: 40px; height: 40px; stroke-width: 1.3; }
+
+/* ---------- Etiquetas y estados ---------- */
+.ct-labels { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.ct-tag { display: inline-flex; align-items: center; gap: 6px; color: #6aa6e0; font-size: 10px; font-weight: 600; line-height: 1.2; letter-spacing: .08em; text-transform: uppercase; }
+.ct-tag .ct-i { width: 13px; height: 13px; }
+.ct-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+  border: 1px solid #2a3444;
+  border-radius: 3px;
+  color: #9aa5b8;
+  font: 11px/1.7 ui-monospace, Menlo, Consolas, monospace;
+}
+.ct-status::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.ct-status.is-obtained { color: #7fd0a0; border-color: #2f6b4c; background: rgba(60, 160, 110, .12); }
+.ct-status.is-in-progress { color: #9cc4f0; border-color: #3b5f8f; background: rgba(58, 126, 206, .14); }
+.ct-status.is-planned { color: #9aa5b8; border-style: dashed; background: transparent; }
+.ct-demo { padding: 0 7px; border: 1px solid #3b5f8f; border-radius: 3px; color: #9cc4f0; font: 10px/1.7 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .06em; text-transform: uppercase; }
+
+/* ---------- Estado vacío ("Próximamente") ---------- */
+.ct-soon { display: grid; justify-items: center; gap: 4px; padding: 36px 16px; text-align: center; border: 1px dashed #2a3444; border-radius: 6px; background: #141922; color: #7d8696; }
+.ct-soon .ct-i { width: 38px; height: 38px; stroke-width: 1.2; color: #46556e; }
+.ct-soon h2 { margin: 6px 0 0; font-size: 15px; font-weight: 600; color: #8e9ab0; }
+
+/* ---------- Detalle ---------- */
+.ct-bar { display: flex; align-items: center; }
+.ct-back {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 6px;
+  border: 1px solid #2a3444;
+  border-radius: 3px;
+  background: #1d2430;
+  color: #c5cfdf;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  cursor: pointer;
+  transition: background .15s ease;
+}
+.ct-back:hover { background: #232c3b; }
+
+.ct-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: linear-gradient(180deg, #1a2130, #161b24);
+  border: 1px solid #232b38;
+  border-radius: 6px;
+}
+.ct-info { min-width: 0; }
+.ct-hero h1 { margin: 8px 0 2px; font-size: 22px; line-height: 1.2; font-weight: 600; color: #eef3fb; }
+.ct-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 5px 12px;
+  border: 1px solid #3b5f8f;
+  border-radius: 3px;
+  background: rgba(58, 126, 206, .18);
+  color: #cfe0f7;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background .15s ease, border-color .15s ease;
+}
+.ct-link:hover { background: rgba(58, 126, 206, .3); border-color: #5f8fc9; }
+
+.ct-sec { min-width: 0; padding: 14px 16px; background: #171c25; border: 1px solid #232b38; border-radius: 6px; }
+.ct-sec h3 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; color: #6aa6e0; font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
+.ct-meta { display: grid; gap: 6px; margin: 0; }
+.ct-row { display: grid; grid-template-columns: minmax(120px, 190px) minmax(0, 1fr); gap: 12px; padding: 7px 10px; background: #141922; border: 1px solid #202836; border-radius: 5px; }
+.ct-meta dt { color: #7d8696; }
+.ct-meta dd { margin: 0; color: #dbe4f2; overflow-wrap: anywhere; }
+.ct-meta dd.is-mono { font: 12px/1.6 ui-monospace, Menlo, Consolas, monospace; }
+
+/* ---------- Certificado en PDF ---------- */
+.ct-hasfile { display: inline-flex; align-items: center; gap: 6px; color: #8e9ab0; font-size: 11px; line-height: 1.4; }
+.ct-hasfile .ct-i { width: 14px; height: 14px; color: #6aa6e0; }
+.ct-doc { display: grid; gap: 10px; justify-items: start; }
+.ct-pdf {
+  display: block;
+  width: 100%;
+  aspect-ratio: 930 / 630;      /* proporción de los certificados de NetAcad */
+  min-height: 260px;
+  background: #0e1218;
+  border: 1px solid #232b38;
+  border-radius: 4px;
+}
+.ct-pdf-fallback { padding: 16px; color: #7d8696; text-align: center; }
+.ct-doc .ct-link { margin-top: 0; }
+
+@container (max-width: 480px) {
+  .ct-hero { flex-direction: column; align-items: flex-start; }
+  .ct-row { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+}
+@media (max-width: 480px) {
+  .ct-head { padding: 12px; gap: 12px; }
+  .ct-hero { padding: 12px; }
+  .ct-hero h1 { font-size: 19px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ct-view { animation: none; }
+  .ct-filter, .ct-card, .ct-back, .ct-link { transition: none; }
+}

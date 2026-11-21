@@ -1,0 +1,71 @@
+/* ==========================================================
+   Skills · estilos (ámbito: .sk-*)
+   Misma identidad que About Me y Projects: oscuro, sobrio, acentos
+   azules discretos. Sin animaciones ni barras de progreso.
+   ========================================================== */
+
+.sk-root { max-width: 960px; margin: 0 auto; color: #a8b3c4; font-size: 13px; line-height: 1.6; }
+.sk-wrap { display: grid; gap: 12px; }
+.sk-root p { margin: 0 0 8px; }
+.sk-root p:last-child { margin-bottom: 0; }
+.sk-i { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- Cabecera ---------- */
+.sk-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  background: linear-gradient(180deg, #1a2130, #161b24);
+  border: 1px solid #232b38;
+  border-radius: 6px;
+}
+.sk-headico { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 6px; background: rgba(79, 143, 224, .12); color: #6aa6e0; }
+.sk-headico .sk-i { width: 22px; height: 22px; }
+.sk-head h1 { margin: 0 0 2px; font-size: 20px; line-height: 1.2; font-weight: 600; color: #eef3fb; }
+.sk-head p { color: #8e9ab0; }
+.sk-root p.sk-note { margin-top: 6px; color: #7d8696; font-size: 12px; }
+
+/* ---------- Tarjetas (categorías y áreas de interés) ---------- */
+.sk-card { min-width: 0; padding: 14px 16px; background: #171c25; border: 1px solid #232b38; border-radius: 6px; }
+.sk-card h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  color: #6aa6e0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.sk-cico { display: inline-grid; place-items: center; }
+.sk-cico .sk-i { width: 16px; height: 16px; }
+.sk-count { margin-left: auto; padding: 0 7px; border: 1px solid #2a3444; border-radius: 3px; background: #1d2430; color: #7d8696; font: 11px/1.6 ui-monospace, Menlo, Consolas, monospace; letter-spacing: 0; }
+.sk-root p.sk-cdesc { margin-bottom: 12px; color: #7d8696; font-size: 12px; }
+
+.sk-grid { display: grid; gap: 12px; align-items: start; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); }
+
+/* ---------- Elementos ---------- */
+.sk-items { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.sk-item { display: flex; gap: 10px; padding: 9px 10px; background: #141922; border: 1px solid #202836; border-radius: 5px; }
+.sk-tile { width: 30px; height: 30px; flex: none; display: grid; place-items: center; border-radius: 5px; background: rgba(79, 143, 224, .12); color: #6aa6e0; }
+.sk-tile .sk-i { width: 17px; height: 17px; }
+.sk-txt { min-width: 0; }
+.sk-name { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 2px; font-size: 13px; font-weight: 600; color: #dbe4f2; }
+.sk-level { padding: 0 7px; border: 1px solid #3b5f8f; border-radius: 3px; color: #9cc4f0; font: 10px/1.6 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .04em; text-transform: uppercase; }
+.sk-item p { font-size: 12px; line-height: 1.5; color: #8e9ab0; }
+
+/* ---------- Etiquetas ---------- */
+.sk-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.sk-chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border: 1px solid #2a3444; border-radius: 3px; background: #1d2430; color: #c5cfdf; font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace; }
+.sk-chip .sk-i { width: 13px; height: 13px; color: #6aa6e0; }
+.sk-interests .sk-chip { border-color: #34547c; background: rgba(58, 126, 206, .14); color: #d5e5fa; }
+
+.sk-related { margin-top: 12px; padding-top: 12px; border-top: 1px solid #202836; }
+.sk-related h3 { margin: 0 0 8px; color: #7d8696; font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+
+@media (max-width: 480px) {
+  .sk-head { padding: 12px; gap: 12px; }
+  .sk-card { padding: 12px; }
+}

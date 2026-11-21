@@ -1,0 +1,161 @@
+/* ==========================================================
+   PARTE 03 · Ventanas (estilo XFCE oscuro) y botones de la barra de tareas
+   Se carga después de desktop.css y no toca el diseño del escritorio.
+   ========================================================== */
+
+/* ---------- Barra de tareas (dentro del panel) ---------- */
+.dk-tasks {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+  padding-left: 4px;
+}
+.dk-task {
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 22px;
+  flex: 0 1 150px;
+  min-width: 34px;
+  max-width: 150px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .04);
+  color: var(--panel-fg);
+  cursor: default;
+  transition: background .15s ease, border-color .15s ease, opacity .15s ease, box-shadow .15s ease;
+}
+.dk-task svg { width: 14px; height: 14px; flex: none; }
+.dk-task span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.dk-task:hover { background: rgba(255, 255, 255, .1); }
+.dk-task:focus-visible { outline: 1px dotted #9cc4f0; }
+.dk-task:active { background: rgba(255, 255, 255, .16); }
+.dk-task.is-active { background: rgba(58, 126, 206, .35); border-color: rgba(120, 175, 240, .45); box-shadow: inset 0 -2px 0 #4f8fe0; }
+.dk-task.is-min { opacity: .65; }
+.dk-task.is-min span::before { content: "["; }
+.dk-task.is-min span::after { content: "]"; }
+
+/* ---------- Ventana ---------- */
+.dk-win {
+  position: absolute;
+  pointer-events: auto;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #14181f;
+  border: 1px solid #0b0d12;
+  border-radius: 5px 5px 2px 2px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .45);
+  transition: left .22s ease, top .22s ease, width .22s ease, height .22s ease, box-shadow .15s ease, border-color .15s ease, opacity .16s ease, transform .16s ease, visibility 0s linear 0s;
+  animation: dk-pop .16s ease-out;
+}
+.dk-win.is-focused { border-color: #2f4d75; box-shadow: 0 10px 30px rgba(0, 0, 0, .6); }
+.dk-win.is-min,
+.dk-win.is-behind {
+  /* Se desvanece y sube hacia el panel; la visibilidad cambia al terminar el fundido */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-12px) scale(.96);
+  pointer-events: none;
+  transition: left .22s ease, top .22s ease, width .22s ease, height .22s ease, box-shadow .15s ease, border-color .15s ease, opacity .16s ease, transform .16s ease, visibility 0s linear .16s;
+}   /* conservan su estado, solo se ocultan */
+.dk-win.is-closing { animation: dk-out .14s ease-in forwards; pointer-events: none; }
+@keyframes dk-pop { from { opacity: 0; transform: translateY(6px) scale(.965); } }
+@keyframes dk-out { to { opacity: 0; transform: translateY(-4px) scale(.965); } }
+@keyframes dk-in { from { opacity: 0; transform: translateY(4px); } }
+
+/* Barra de título */
+.dk-titlebar {
+  position: relative;
+  flex: none;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 8px;
+  background: #1d222b;
+  color: #8f98a7;
+  border-bottom: 1px solid #0b0d12;
+  transition: background .15s ease, color .15s ease;
+}
+.dk-win.is-focused .dk-titlebar { background: #252b36; color: #e3e8f0; }
+.dk-wico { width: 16px; height: 16px; flex: none; }
+.dk-titlebar h2 {
+  position: absolute;
+  left: 40px;
+  right: 64px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dk-wbtns { position: relative; margin-left: auto; display: flex; gap: 2px; }
+.dk-wbtns button {
+  all: unset;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 20px;
+  border-radius: 3px;
+  color: inherit;
+  transition: background .12s ease, color .12s ease;
+}
+.dk-wbtns svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; }
+.dk-wbtns button:hover { background: rgba(255, 255, 255, .12); }
+.dk-wbtns button[data-act="close"]:hover { background: #b8433d; color: #fff; }
+.dk-wbtns button:active { background: rgba(255, 255, 255, .2); }
+.dk-wbtns button[data-act="close"]:active { background: #9a3732; color: #fff; }
+.dk-wbtns button:focus-visible { outline: 1px dotted #9cc4f0; }
+
+/* Ruta + cuerpo (aquí se montará el contenido de cada sección) */
+.dk-wloc {
+  flex: none;
+  padding: 5px 10px;
+  background: #171b22;
+  border-bottom: 1px solid #0e1116;
+  color: #7d8696;
+  font: 11px/1.2 ui-monospace, Menlo, Consolas, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dk-wbody { flex: 1; min-height: 0; overflow: auto; padding: 14px; scrollbar-width: thin; scrollbar-color: #323d50 transparent; }
+.dk-wbody::-webkit-scrollbar { width: 10px; height: 10px; }
+.dk-wbody::-webkit-scrollbar-track { background: transparent; }
+.dk-wbody::-webkit-scrollbar-thumb { background: #2c3647; border: 2px solid transparent; border-radius: 6px; background-clip: content-box; }
+.dk-wbody::-webkit-scrollbar-thumb:hover { background: #3b4a63; background-clip: content-box; }
+.dk-wbody > * { animation: dk-in .2s ease-out; }   /* el contenido aparece al abrir la ventana */
+.dk-empty { height: 100%; display: grid; place-content: center; gap: 6px; text-align: center; color: #7d8696; }
+.dk-empty small { font-size: 11px; }
+
+/* Pantallas pequeñas: solo la ventana activa muestra su nombre; las demás, solo el icono */
+@media (max-width: 600px) {
+  .dk-task { justify-content: center; max-width: 40px; }
+  .dk-task span { display: none; }
+  .dk-task.is-active { max-width: 120px; justify-content: flex-start; }
+  .dk-task.is-active span { display: block; }
+}
+/* Pantallas táctiles: zonas de toque más grandes */
+@media (pointer: coarse) {
+  .dk-titlebar { height: 34px; }
+  .dk-wbtns button { width: 34px; height: 28px; }
+  .dk-task { height: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dk-win,
+  .dk-win.is-min,
+  .dk-win.is-behind { transition: none; animation: none; }
+  .dk-wbody > * { animation: none; }
+  .dk-titlebar,
+  .dk-wbtns button,
+  .dk-task { transition: none; }
+}
